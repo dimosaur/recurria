@@ -1,3 +1,4 @@
+import { ModalProvider } from "@/components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -27,19 +28,21 @@ export default function RootLayout() {
         <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
           <StatusBar barStyle="light-content" backgroundColor="#000" />
           <QueryClientProvider client={queryClient}>
-            {dbReady ? (
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen
-                  name="subscription"
-                  options={{ presentation: "modal" }}
-                />
-              </Stack>
-            ) : (
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <ActivityIndicator color="#fff" />
-              </View>
-            )}
+            <ModalProvider>
+              {dbReady ? (
+                <Stack screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen
+                    name="subscription"
+                    options={{ presentation: "modal" }}
+                  />
+                </Stack>
+              ) : (
+                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                  <ActivityIndicator color="#fff" />
+                </View>
+              )}
+            </ModalProvider>
           </QueryClientProvider>
         </SafeAreaView>
       </SafeAreaProvider>
