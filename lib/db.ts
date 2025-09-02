@@ -9,6 +9,7 @@ export type RecurringExpense = {
   cadence: Cadence;
   startsOn: string; // ISO date
   category?: string | null;
+  paused?: boolean;
 };
 
 const DB_NAME = "recurria.db";
@@ -32,9 +33,15 @@ export async function migrate(): Promise<void> {
         amount REAL NOT NULL,
         cadence TEXT NOT NULL CHECK (cadence IN ('weekly','biweekly','monthly','quarterly','yearly')),
         starts_on TEXT NOT NULL,
-        category TEXT
+        category TEXT,
+        paused INTEGER NOT NULL DEFAULT 0
       );`
   );
+  const cols = await db.getAllAsync<{ name: string }>("PRAGMA table_info(expenses)");
+  const hasPaused = cols?.some((c) => c.name === "paused");
+  if (!hasPaused) {
+    await db.execAsync("ALTER TABLE expenses ADD COLUMN paused INTEGER NOT NULL DEFAULT 0");
+  }
 }
 
 export async function hasAnyExpenses(): Promise<boolean> {
@@ -66,7 +73,7 @@ export async function seedIfEmpty(): Promise<void> {
 
   await db.withTransactionAsync(async () => {
     const stmt = await db.prepareAsync(
-      "INSERT INTO expenses (name, amount, cadence, starts_on, category) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO expenses (name, amount, cadence, starts_on, category, paused) VALUES (?, ?, ?, ?, ?, 0)"
     );
     try {
       for (const e of seed) {
@@ -93,7 +100,8 @@ export async function listExpenses(): Promise<RecurringExpense[]> {
     cadence: Cadence;
     starts_on: string;
     category: string | null;
-  }>("SELECT id, name, amount, cadence, starts_on, category FROM expenses");
+    paused: number;
+  }>("SELECT id, name, amount, cadence, starts_on, category, paused FROM expenses");
 
   return rows.map((r) => ({
     id: r.id,
@@ -102,20 +110,43 @@ export async function listExpenses(): Promise<RecurringExpense[]> {
     cadence: r.cadence,
     startsOn: r.starts_on,
     category: r.category,
+    paused: !!r.paused,
   }));
 }
 
 export async function addExpense(expense: RecurringExpense): Promise<number> {
   const db = getDb();
   const res = await db.runAsync(
-    "INSERT INTO expenses (name, amount, cadence, starts_on, category) VALUES (?, ?, ?, ?, ?)",
+    "INSERT INTO expenses (name, amount, cadence, starts_on, category, paused) VALUES (?, ?, ?, ?, ?, ?)",
     expense.name,
     expense.amount,
     expense.cadence,
     expense.startsOn,
-    expense.category ?? null
+    expense.category ?? null,
+    expense.paused ? 1 : 0
   );
   return res.lastInsertRowId ?? 0;
+}
+
+export async function updateExpense(id: number, update: Partial<RecurringExpense>): Promise<void> {
+  const db = getDb();
+  const fields: string[] = [];
+  const values: SQLite.SQLiteBindValue[] = [];
+  if (update.name !== undefined) { fields.push("name = ?"); values.push(update.name); }
+  if (update.amount !== undefined) { fields.push("amount = ?"); values.push(update.amount); }
+  if (update.cadence !== undefined) { fields.push("cadence = ?"); values.push(update.cadence); }
+  if (update.startsOn !== undefined) { fields.push("starts_on = ?"); values.push(update.startsOn); }
+  if (update.category !== undefined) { fields.push("category = ?"); values.push(update.category ?? null); }
+  if (update.paused !== undefined) { fields.push("paused = ?"); values.push(update.paused ? 1 : 0); }
+  if (fields.length === 0) return;
+  values.push(id);
+  const sql = `UPDATE expenses SET ${fields.join(", ")} WHERE id = ?`;
+  await db.runAsync(sql, ...values);
+}
+
+export async function deleteExpense(id: number): Promise<void> {
+  const db = getDb();
+  await db.runAsync("DELETE FROM expenses WHERE id = ?", id);
 }
 
 export async function clearAll(): Promise<void> {

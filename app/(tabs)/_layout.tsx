@@ -102,6 +102,14 @@ function FloatingTabBar(props: BottomTabBarProps) {
     });
   }, [state.index, routes, scaleAnims]);
 
+  const focusedOptions = descriptors[routes[state.index].key].options;
+  const tabBarFlattened = StyleSheet.flatten(focusedOptions?.tabBarStyle) as
+    | { display?: string }
+    | undefined;
+  if (tabBarFlattened?.display === "none") {
+    return null;
+  }
+
   return (
     <View
       pointerEvents="box-none"

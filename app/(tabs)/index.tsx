@@ -33,8 +33,10 @@ export default function Overview() {
   const monthShort = nowDate.toLocaleString(undefined, { month: "short" });
   const yearStr = String(nowDate.getFullYear());
 
+  const activeExpenses = useMemo(() => expenses.filter((e) => !e.paused), [expenses]);
+
   const upcoming = useMemo(() => {
-    const items = expenses
+    const items = activeExpenses
       .map((e) => {
         const nextAt = getNextOccurrence(e.startsOn, e.cadence);
         const days = daysBetween(new Date(), nextAt);
@@ -43,9 +45,9 @@ export default function Overview() {
       .sort((a, b) => a.nextAt.getTime() - b.nextAt.getTime())
       .slice(0, 10);
     return items;
-  }, [expenses]);
+  }, [activeExpenses]);
 
-  const totals = useMemo(() => computeTotals(expenses), [expenses]);
+  const totals = useMemo(() => computeTotals(activeExpenses), [activeExpenses]);
 
   if (isLoading) {
     return (
