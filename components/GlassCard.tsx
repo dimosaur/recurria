@@ -1,16 +1,18 @@
 import { BlurView } from "expo-blur";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
-export default function GlassCard({
-  children,
-  style,
-  innerStyle,
-}: {
+type GlassCardProps = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   innerStyle?: StyleProp<ViewStyle>;
-}) {
+};
+
+export const GlassCard: FC<GlassCardProps> = ({
+  children,
+  style,
+  innerStyle,
+}) => {
   return (
     <BlurView
       tint="dark"
@@ -21,7 +23,7 @@ export default function GlassCard({
       <View style={[styles.glassInner, innerStyle]}>{children}</View>
     </BlurView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   glassCard: {

@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { FC } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export type ChipProps = {
@@ -11,14 +11,14 @@ export type ChipProps = {
   testID?: string;
 };
 
-export default function Chip({
+export const Chip: FC<ChipProps> = ({
   label,
   selected,
   onPress,
   iconBg,
   iconName,
   testID,
-}: ChipProps) {
+}) => {
   return (
     <Pressable
       accessibilityRole="button"
@@ -33,7 +33,7 @@ export default function Chip({
       ]}
     >
       {iconBg && iconName ? (
-        <View style={[styles.chipIcon, { backgroundColor: iconBg }]}> 
+        <View style={[styles.chipIcon, { backgroundColor: iconBg }]}>
           <Ionicons name={iconName} size={12} color="#fff" />
         </View>
       ) : null}
@@ -42,7 +42,7 @@ export default function Chip({
       </Text>
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   chip: {
@@ -75,5 +75,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-

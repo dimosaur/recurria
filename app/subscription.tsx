@@ -1,5 +1,4 @@
-import Chip from "@/components/Chip";
-import FormField from "@/components/FormField";
+import { Chip, FormField } from "@/components";
 import { getCategoryMeta } from "@/lib/categories";
 import type { Cadence, RecurringExpense } from "@/lib/db";
 import {
@@ -211,7 +210,9 @@ export default function SubscriptionModalScreen() {
                 },
                 validate: (v) => {
                   const amt = Number(v);
-                  return (!!v && !isNaN(amt) && amt > 0) || "Enter a valid amount";
+                  return (
+                    (!!v && !isNaN(amt) && amt > 0) || "Enter a valid amount"
+                  );
                 },
               }}
               render={({ field: { onChange, value, onBlur } }) => (

@@ -1,6 +1,4 @@
-import DuePill from "@/components/DuePill";
-import GlassCard from "@/components/GlassCard";
-import InfoTile from "@/components/InfoTile";
+import { DuePill, GlassCard, InfoTile } from "@/components";
 import { getCategoryMeta } from "@/lib/categories";
 import { computeTotals, daysBetween, getNextOccurrence } from "@/lib/date";
 import type { Cadence } from "@/lib/db";
@@ -33,7 +31,10 @@ export default function Overview() {
   const monthShort = nowDate.toLocaleString(undefined, { month: "short" });
   const yearStr = String(nowDate.getFullYear());
 
-  const activeExpenses = useMemo(() => expenses.filter((e) => !e.paused), [expenses]);
+  const activeExpenses = useMemo(
+    () => expenses.filter((e) => !e.paused),
+    [expenses]
+  );
 
   const upcoming = useMemo(() => {
     const items = activeExpenses

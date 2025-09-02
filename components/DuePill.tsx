@@ -1,4 +1,5 @@
 import { pluralize } from "@/lib/date";
+import { FC } from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 
 function getDueStyle(days: number) {
@@ -26,14 +27,14 @@ function getDueStyle(days: number) {
   };
 }
 
-export default function DuePill({ days }: { days: number }) {
+export const DuePill: FC<{ days: number }> = ({ days }) => {
   const { bg, text, label } = getDueStyle(days);
   return (
     <View style={[styles.duePill, { backgroundColor: bg }]}>
       <Text style={[styles.duePillText, { color: text }]}>{label}</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   duePill: {

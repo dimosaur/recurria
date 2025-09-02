@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { ComponentProps } from "react";
+import { ComponentProps, FC } from "react";
 import {
   Platform,
   StyleProp,
@@ -8,21 +8,23 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import GlassCard from "./GlassCard";
+import { GlassCard } from "./GlassCard";
 
-export default function InfoTile({
-  icon,
-  label,
-  value,
-  sub,
-  style,
-}: {
+type InfoTileProps = {
   icon: ComponentProps<typeof Ionicons>["name"];
   label: string;
   value: string;
   sub?: string;
   style?: StyleProp<ViewStyle>;
-}) {
+};
+
+export const InfoTile: FC<InfoTileProps> = ({
+  icon,
+  label,
+  value,
+  sub,
+  style,
+}) => {
   return (
     <GlassCard style={[styles.statTile, style]}>
       <View>
@@ -37,7 +39,7 @@ export default function InfoTile({
       </View>
     </GlassCard>
   );
-}
+};
 
 const styles = StyleSheet.create({
   statTile: {

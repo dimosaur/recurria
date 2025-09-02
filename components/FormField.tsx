@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import type { FieldError } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -10,7 +10,13 @@ export type FormFieldProps = {
   testID?: string;
 };
 
-export default function FormField({ label, children, error, right, testID }: FormFieldProps) {
+export const FormField: FC<FormFieldProps> = ({
+  label,
+  children,
+  error,
+  right,
+  testID,
+}) => {
   const errorMsg = typeof error === "string" ? error : error?.message;
   return (
     <View style={{ marginBottom: 14 }} testID={testID}>
@@ -22,7 +28,7 @@ export default function FormField({ label, children, error, right, testID }: For
       {!!errorMsg && <Text style={styles.fieldError}>{errorMsg}</Text>}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   headerRow: {
@@ -41,5 +47,3 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-
-

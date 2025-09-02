@@ -1,4 +1,4 @@
-import GlassCard from "@/components/GlassCard";
+import { GlassCard } from "@/components";
 import { getCategoryMeta } from "@/lib/categories";
 import type { RecurringExpense } from "@/lib/db";
 import { currency } from "@/lib/format";
@@ -18,7 +18,10 @@ import {
 import Swipeable, {
   type SwipeableMethods,
 } from "react-native-gesture-handler/ReanimatedSwipeable";
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 
 const ACTION_WIDTH = 80;
 
@@ -67,17 +70,18 @@ export default function Subscriptions() {
               <SubscriptionSwipeRow
                 key={item.id}
                 item={item}
-                onPauseToggle={() =>
-                  {
-                    console.log("Subscriptions pause");
-                    return updateExpense({
-                      id: item.id!,
-                      update: { paused: !item.paused },
-                    });
-                  }
-                }
+                onPauseToggle={() => {
+                  console.log("Subscriptions pause");
+                  return updateExpense({
+                    id: item.id!,
+                    update: { paused: !item.paused },
+                  });
+                }}
                 onEdit={() => {
-                  router.push({ pathname: "/subscription", params: { id: String(item.id) } });
+                  router.push({
+                    pathname: "/subscription",
+                    params: { id: String(item.id) },
+                  });
                 }}
               />
             ))}
@@ -209,9 +213,7 @@ function SwipeLeftAction({ paused }: { paused: boolean }) {
 
 function SwipeRightAction() {
   return (
-    <View
-      style={[styles.swipeAction, styles.swipeRight, { width: '100%' }]}
-    >
+    <View style={[styles.swipeAction, styles.swipeRight, { width: "100%" }]}>
       <Text style={styles.swipeText}>Edit</Text>
       <Ionicons name="create-outline" size={16} color="#000" />
     </View>
